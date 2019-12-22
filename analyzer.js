@@ -1,17 +1,20 @@
+p5.disableFriendlyErrors = true; // disables FES
+
 let mic, fft;
 
 const drawState = Array(80);
 
-function setup() {
-  frameRate(5);
 
-  createCanvas(1000, 1600);
+function setup() {
+  frameRate(100);
+
+  createCanvas(1000, 8000);
   noFill();
   noStroke();
 
   mic = new p5.AudioIn();
   mic.start();
-  fft = new p5.FFT(0, 1024);
+  fft = new p5.FFT(0, 4096);
   fft.setInput(mic);
 }
 
@@ -42,7 +45,7 @@ function drawLabel(label, frequency){
 
 
 function drawEngine() {
-  if (drawState.length > 50) drawState.shift();
+  if (drawState.length > 10) drawState.shift();
   let spectrum = fft.analyze();
   if (spectrum) drawState.push(spectrum);
   drawFrequency();
@@ -53,7 +56,7 @@ function drawFrequency() {
     drawState.forEach((spectrum, time) => {
       if (spectrum) {
         spectrum.forEach((amplitude, frequency) => {
-          if (amplitude > 10) {
+          if (amplitude > 50) {
             drawDot(time, frequency, amplitude);
           }
         });
@@ -63,18 +66,24 @@ function drawFrequency() {
 }
 
 function drawDot(x, y, amp) {
-  if (amp > 100) {
+  if(amp > 130){
+    fill(255,40,0)
+  } else if(amp > 120){
+    fill(255,165,0)
+  } else if(amp > 110){
+    fill(255,255,0)
+  } else if (amp > 105) {
     fill(0, 0, 0);
-  } else if (amp > 70) {
-    fill(200, 0, 0);
-  } else if (amp > 50) {
+  } else if (amp > 100) {
+    fill(0, 100, 0);
+  } else if (amp > 80) {
     fill(0, 255, 0);
-  } else if (amp > 20) {
+  } else if (amp > 70) {
     fill(0, 0, 255);
   } else {
-    fill(200, 200, 200);
+    fill(350, 350, 350);
   }
-  ellipse(x * 12, y * 10, 5, 5);
+  square(x * 5, y * 5, 5);
 }
 
 function mouseClicked() {
